@@ -1,97 +1,113 @@
 from flask import Flask, jsonify, request, render_template
 
 import json
+import random
 
 app = Flask(__name__)
 
 
-# @app.route('/')
-# def home():
-#     return render_template('index.html')
+# GET /randomScripture
+@app.route('/randomScripture/')
+def get_random():
+    '''
+    Gets a random scripture
+    '''
+
+    with open('scriptures.json', 'r') as scriptures_file:
+        scriptures = json.load(scriptures_file)
+
+    return jsonify(random.choice(scriptures['scriptures']))
 
 
-# POST /scripture data: (name:)
+# POST /scripture
 @app.route('/scripture/', methods=['POST'])
 def create_scripture():
     '''
-    {
-        scripture :
-            {
-                verse: "",
-                action: ""
-            }
-    }
+    Add scripture to database
     '''
-    request_data = request.get_json()
 
-    # print(request_data.keys())
+    with open('scriptures.json', 'r') as scriptures_file:
+        scriptures = json.load(scriptures_file)
 
-    # scriptures.scriptures[request_data.keys()[0]] = {
-    #     'verse': request_data[request_data.keys()[0]]['verse'],
-    #     'action': request_data[request_data.keys()[0]]['action']
-    # }
+    scriptures['scriptures'].append(request.get_json())
 
-    for key in request_data.keys():
-        scripture_key = key
+    with open('scriptures.json', 'w') as scriptures_file:
+        json.dump(scriptures, scriptures_file, indent=4)
 
-        scriptures.scriptures[key] = {
-            'verse': request_data[key]['verse'],
-            'action': request_data[key]['action']
-        }
-
-    new_scripture = {}
-
-    new_scripture[scripture_key] = scriptures.scriptures[scripture_key]
-
-    return jsonify(new_scripture)
-
-
-# GET /store/<string:name>
-# @app.route('/store/<string:name>')
-# def get_store(name):
-#     for store in stores:
-#         if name == store['name']:
-#             return jsonify(store)
-
-#     return jsonify({'message': 'store not found'})
+    return jsonify('{"message": "scripture added"}')
 
 
 # GET /scripture
 @app.route('/scripture/')
 def get_scriptures():
+    '''
+    Gets all scriptures
+    '''
+
     with open('scriptures.json', 'r') as scriptures_file:
         scriptures = json.load(scriptures_file)
 
     return jsonify(scriptures)
 
 
-# # POST /store/<string:name>/item (name:, price:)
-# @app.route('/store/<string:name>/item', methods=['POST'])
-# def create_item_in_store(name):
-#     request_data = request.get_json()
+# PUT /updateScripture
+@app.route('/updateScripture/', methods=['PUT'])
+def update_scripture():
+    '''
+    Update scripture from database
+    '''
 
-#     for store in stores:
-#         if name == store['name']:
+    with open('scriptures.json', 'r') as scriptures_file:
+        scriptures = json.load(scriptures_file)
 
-#             new_item = {
-#                 'name': request_data['name'],
-#                 'price': request_data['price']
-#             }
+    for i in range(len(scriptures['scriptures'])):
+        if scriptures['scriptures'][i]['scripture'] == request.get_json()['scripture']:
+            try:
+                scriptures['scriptures'][i]['scripture'] = request.get_json()['new_scripture']
 
-#             store['items'].append(new_item)
-#             return jsonify(new_item)
+            except KeyError:
+                pass
 
-#     return jsonify({'message': 'store not found'})
+            try:
+                scriptures['scriptures'][i]['verse'] = request.get_json()['new_verse']
+
+            except KeyError:
+                pass
+
+            try:
+                scriptures['scriptures'][i]['action'] = request.get_json()['new_action']
+
+            except KeyError:
+                pass
+
+            with open('scriptures.json', 'w') as scriptures_file:
+                json.dump(scriptures, scriptures_file, indent=4)
+
+            return jsonify('{"message": "scripture updated"}')
+
+    return jsonify('{"message": "unable to find matching scripture"}')
 
 
-# GET /store/<string:name>/item
-# @app.route('/store/<string:name>/item')
-# def get_items_in_store(name):
-#     for store in stores:
-#         if name == store['name']:
-#             return jsonify({'items': store['items']})
+# DELETE /deleteScripture
+@app.route('/deleteScripture/', methods=['DELETE'])
+def delete_scripture():
+    '''
+    Delete scripture from database
+    '''
 
-#     return jsonify({'message': 'store not found'})
+    with open('scriptures.json', 'r') as scriptures_file:
+        scriptures = json.load(scriptures_file)
+
+    for i in range(len(scriptures['scriptures'])):
+        if scriptures['scriptures'][i]['scripture'] == request.get_json()['scripture']:
+            scriptures['scriptures'].pop(i)
+
+            with open('scriptures.json', 'w') as scriptures_file:
+                json.dump(scriptures, scriptures_file, indent=4)
+
+            return jsonify('{"message": "scripture removed"}')
+
+    return jsonify('{"message": "unable to find matching scripture"}')
 
 
 app.run(port=5000)
