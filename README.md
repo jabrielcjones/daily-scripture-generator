@@ -24,20 +24,60 @@ I'm looking forward to improving this as time goes along!
 
 ## Deploy Frontend on Mac
 
-Install NPM
-
 ```zsh
 brew install node
-```
 
-Install dependencies
-
-```
 npm install
-```
 
-Start frontend dev server
-
-```
 npm start
 ```
+
+## Deploy Backend on Mac
+
+```zsh
+cd backend-api/
+
+. venv/bin/activate
+
+pip install -m requirements.txt
+
+python app.py
+```
+
+## Backend API Guide
+
+### GET random scripture
+
+Request
+
+```
+http://<IP ADDRESS>/randomScripture/
+```
+
+Response
+
+```json
+{
+  "action": "an action",
+  "scripture": "a scripture",
+  "verse": "a verse"
+}
+```
+
+### Add new scripture
+
+Request
+
+Response
+
+### Update scripture
+
+Request
+
+Response
+
+### Delete scripture
+
+Request
+
+Response
