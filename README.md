@@ -1,83 +1,38 @@
-# Daily Scripture Generator
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-VERY fun project I made for a coding challenge with some friends --
+## Getting Started
 
-Built with React, Next JS and Tailwind CSS. Deployed with Vercel.
+First, run the development server:
 
-Used NPM for icons and sharing.
-
-The scriptures are housed within an array of objects.
-
-I wanted a really simple and clean UI and I believe I achieved that here.
-
-I am passionate about reading scriptures that are historically accurate.
-
-All of the scriptures have the Hebrew name for "The Lord".
-
-I built this in one day and you can view the project below
-
-I'm looking forward to improving this as time goes along!
-
-## Deploy Frontend with Vercel
-
-[Daily Scripture Generator via Vercel](https://daily-scripture-generator.vercel.app/)
-
-## Deploy Frontend on Mac
-
-```zsh
-brew install node
-
-npm install
-
-npm start
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
 ```
 
-## Deploy Backend on Mac
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-```zsh
-cd backend-api/
+You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
 
-. venv/bin/activate
+[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
 
-pip install -m requirements.txt
+The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
-python app.py
-```
+This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## Backend API Guide
+## Learn More
 
-### GET random scripture
+To learn more about Next.js, take a look at the following resources:
 
-Request
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-```
-http://<IP ADDRESS>/randomScripture/
-```
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-Response
+## Deploy on Vercel
 
-```json
-{
-  "action": "an action",
-  "scripture": "a scripture",
-  "verse": "a verse"
-}
-```
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-### Add new scripture
-
-Request
-
-Response
-
-### Update scripture
-
-Request
-
-Response
-
-### Delete scripture
-
-Request
-
-Response
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
