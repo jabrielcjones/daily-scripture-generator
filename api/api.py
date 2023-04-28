@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 
 # GET /randomScripture
-@app.route('/randomScripture/')
+@app.route('/scripture/', methods=['GET'])
 def get_random():
     '''
     Gets a random scripture

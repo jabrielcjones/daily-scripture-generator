@@ -8,5 +8,14 @@ module.exports = {
         }
 
         return config;
-    }
+    },
+    async rewrites() {
+        return [
+          {
+            source: '/',
+            destination: 'http://localhost:5000'
+          }
+        ]
+      }
+
 }
