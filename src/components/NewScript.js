@@ -137,32 +137,26 @@ function NewScript() {
     const [scripture, setScripture] = useState(0)
 
     useEffect(() => {
-        fetch('/scripture', {headers: { "Accept": "application/json"}}).then(res => {
-        // fetch('/scripture').then(res => {
-            // console.log(res.json())
-            console.log(res)
+        fetch('http://127.0.0.1:5000/scripture').then(res => {
             return res.json()
             
         }).then(data => {
-            console.log(data)
             setScripture(data);
         });
     }, []);
-
-    console.log(scripture)
 
     return (
         <div className="flex items-center justify-center flex-col">
             {/*Scripture Verse*/}
             <div className="w-full flex h-auto mb-4 rounded-lg p-2 flex-col border-gray-50 text-center">
-                <h1 id="text" className="text-2xl font-bold mb-2"> {scripts[num].name}</h1>
-                <h4 id="location" className="text-sm">{scripts[num].chapter}</h4>
+                <h1 id="text" className="text-2xl font-bold mb-2"> {scripture.verse}</h1>
+                <h4 id="location" className="text-sm">{scripture.scripture}</h4>
             </div>
             {/*Share*/}
             <div className="space-x-4 mt-4 flex w-full justify-center items-center">
                 <FacebookShareButton
                     url="https://yahdaily.vercel.app/"
-                    quote={scripts[num].name + " (" + scripts[num].chapter + ")" + " | " + scripts[num].action}
+                    quote={scripture.verse + " (" + scripture.scripture + ")" + " | " + scripture.action}
                     title="My Daily Scriptures"
                     className="Demo__some-network__share-button">
                     <FacebookShareCount url="https://yahdaily.vercel.app/" />
@@ -179,7 +173,7 @@ function NewScript() {
                 </TwitterShareButton>
                 <LinkedinShareButton
                     url="https://yahdaily.vercel.app/"
-                    summary={scripts[num].name}
+                    summary={scripture.verse}
                     source="Daily Scripture Generator"
                     className="Demo__some-network__share-button">
                     <LinkedinIcon
@@ -188,7 +182,7 @@ function NewScript() {
                 </LinkedinShareButton>
                 <RedditShareButton
                     url="https://yahdaily.vercel.app/"
-                    summary={scripts[num].name}
+                    summary={scripture.verse}
                     source="Daily Scripture Generator"
                     className="Demo__some-network__share-button">
                     <RedditIcon
@@ -199,7 +193,7 @@ function NewScript() {
 
             {/*Action*/}
             <div className="w-full md:w-3/4 justify-center text-sm rounded-lg bg-blue-50 mt-4 shadow-inner hover:border-blue-300 transition border-2 border-transparent flex p-2 flex-col text-center">
-                <h4 className=" justify-center italic px-2 md:px-8" id="action">{scripts[num].action}</h4>
+                <h4 className=" justify-center italic px-2 md:px-8" id="action">{scripture.action}</h4>
             </div>
         </div>
     )

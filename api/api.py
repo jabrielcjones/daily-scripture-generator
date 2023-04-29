@@ -1,4 +1,6 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
+
 # from pymongo import MongoClient
 
 
@@ -6,6 +8,7 @@ import json
 import random
 
 app = Flask(__name__)
+CORS(app, origins=["http://localhost:3000"])
 
 
 # GET /randomScripture
@@ -15,8 +18,7 @@ def get_random():
     Gets a random scripture
     '''
 
-    print('Connecting to the database...')
-
+    # print('Connecting to the database...')
     # client = MongoClient(
     #     'mongodb://{0}:{1}@localhost:27017'.format('mongoadmin', 'password'))
     # db = client.db('scriptures')
@@ -24,7 +26,10 @@ def get_random():
     with open('data/scriptures.json', 'r') as scriptures_file:
         scriptures = json.load(scriptures_file)
 
-    return jsonify(random.choice(scriptures['scriptures']))
+    response = jsonify(random.choice(scriptures['scriptures']))
+    # Enable Access-Control-Allow-Origin
+    # response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 
 # POST /scripture
@@ -46,16 +51,16 @@ def create_scripture():
 
 
 # GET /scripture
-@app.route('/scripture/')
-def get_scriptures():
-    '''
-    Gets all scriptures
-    '''
+# @app.route('/scripture/')
+# def get_scriptures():
+#     '''
+#     Gets all scriptures
+#     '''
 
-    with open('data/scriptures.json', 'r') as scriptures_file:
-        scriptures = json.load(scriptures_file)
+#     with open('data/scriptures.json', 'r') as scriptures_file:
+#         scriptures = json.load(scriptures_file)
 
-    return jsonify(scriptures)
+#     return jsonify(scriptures)
 
 
 # PUT /updateScripture

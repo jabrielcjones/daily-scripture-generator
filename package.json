@@ -4,7 +4,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "start-api": "cd api && export FLASK_APP=api.py && export FLASK_ENV=development && flask run --no-debugger"
+    "start-api": "cd api && export FLASK_APP=api.py && export FLASK_ENV=development && flask run"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
