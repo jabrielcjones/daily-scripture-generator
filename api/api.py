@@ -1,14 +1,15 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-# from pymongo import MongoClient
-
-
+import logging as logger
 import json
 import random
 
+
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:3000"])
+
+logger.basicConfig(filename='api.log', level=logger.DEBUG)
 
 
 # GET /randomScripture
@@ -18,17 +19,11 @@ def get_random():
     Gets a random scripture
     '''
 
-    # print('Connecting to the database...')
-    # client = MongoClient(
-    #     'mongodb://{0}:{1}@localhost:27017'.format('mongoadmin', 'password'))
-    # db = client.db('scriptures')
-
     with open('data/scriptures.json', 'r') as scriptures_file:
         scriptures = json.load(scriptures_file)
 
     response = jsonify(random.choice(scriptures['scriptures']))
-    # Enable Access-Control-Allow-Origin
-    # response.headers.add("Access-Control-Allow-Origin", "*")
+
     return response
 
 
@@ -42,25 +37,26 @@ def create_scripture():
     with open('data/scriptures.json', 'r') as scriptures_file:
         scriptures = json.load(scriptures_file)
 
+    logger.debug(f"request payload: {request.get_json()}")
     scriptures['scriptures'].append(request.get_json())
 
     with open('data/scriptures.json', 'w') as scriptures_file:
         json.dump(scriptures, scriptures_file, indent=4)
 
-    return jsonify('{"message": "scripture added"}')
+    return jsonify({"success": "true"})
 
 
-# GET /scripture
-# @app.route('/scripture/')
-# def get_scriptures():
-#     '''
-#     Gets all scriptures
-#     '''
+# GET /scriptures
+@app.route('/scriptures/')
+def get_scriptures():
+    '''
+    Gets all scriptures
+    '''
 
-#     with open('data/scriptures.json', 'r') as scriptures_file:
-#         scriptures = json.load(scriptures_file)
+    with open('data/scriptures.json', 'r') as scriptures_file:
+        scriptures = json.load(scriptures_file)
 
-#     return jsonify(scriptures)
+    return jsonify(scriptures)
 
 
 # PUT /updateScripture
@@ -102,10 +98,10 @@ def update_scripture():
             return jsonify('{"message": "scripture updated"}')
 
     return jsonify('{"message": "unable to find matching scripture"}')
-
+    
 
 # DELETE /deleteScripture
-@app.route('/deleteScripture/', methods=['DELETE'])
+@app.route('/scripture/', methods=['DELETE'])
 def delete_scripture():
     '''
     Delete scripture from database
@@ -114,16 +110,25 @@ def delete_scripture():
     with open('data/scriptures.json', 'r') as scriptures_file:
         scriptures = json.load(scriptures_file)
 
-    for i in range(len(scriptures['scriptures'])):
-        if scriptures['scriptures'][i]['scripture'] == request.get_json()['scripture']:
-            scriptures['scriptures'].pop(i)
+    start_size = len(scriptures['scriptures'])
+    scriptures['scriptures'] = list(
+        filter(
+            lambda x: x['scripture'] != request.get_json(),
+            scriptures['scriptures']
+            )
+        )
 
-            with open('data/scriptures.json', 'w') as scriptures_file:
-                json.dump(scriptures, scriptures_file, indent=4)
+    # for i in range(len(scriptures['scriptures'])):
+    #     if scriptures['scriptures'][i]['scripture'] == request.get_json()['scripture']:
+    #         scriptures['scriptures'].pop(i)
 
-            return jsonify('{"message": "scripture removed"}')
+    if start_size > len(scriptures['scriptures']):
+        with open('data/scriptures.json', 'w') as scriptures_file:
+            json.dump(scriptures, scriptures_file, indent=4)
 
-    return jsonify('{"message": "unable to find matching scripture"}')
+        return jsonify({"success": "true"})
+
+    return jsonify({"success": "true", "message": "unable to find matching scripture"})
 
 
 # app.run(port=5000)
