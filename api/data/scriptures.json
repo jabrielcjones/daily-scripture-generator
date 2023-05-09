@@ -124,6 +124,11 @@
             "verse": "For Yahuah your Elohim is he that goes with you, to fight for you against your enemies, to save you.",
             "scripture": "Deuteronomy 20:4",
             "action": "Remember that Yah is with you, if you keep his commandments. Trust that he will fight your battles for you."
+        },
+        {
+            "action": "test action",
+            "verse": "updated test verse",
+            "scripture": "test scripture"
         }
     ]
 }

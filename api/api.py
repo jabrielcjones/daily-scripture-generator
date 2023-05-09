@@ -1,10 +1,9 @@
-from flask import Flask, jsonify, request
-from flask_cors import CORS
-
-import logging as logger
 import json
+import logging as logger
 import random
 
+from flask import Flask, jsonify, request
+from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:3000"])
@@ -12,9 +11,9 @@ CORS(app, origins=["http://localhost:3000"])
 logger.basicConfig(filename='api.log', level=logger.DEBUG)
 
 
-# GET /randomScripture
+# GET /scripture
 @app.route('/scripture/', methods=['GET'])
-def get_random():
+def get_scripture():
     '''
     Gets a random scripture
     '''
@@ -29,7 +28,7 @@ def get_random():
 
 # POST /scripture
 @app.route('/scripture/', methods=['POST'])
-def create_scripture():
+def add_scripture():
     '''
     Add scripture to database
     '''
@@ -60,45 +59,36 @@ def get_scriptures():
 
 
 # PUT /updateScripture
-@app.route('/updateScripture/', methods=['PUT'])
-def update_scripture():
+@app.route('/scripture/verse', methods=['PUT'])
+def update_verse():
     '''
     Update scripture from database
     '''
 
+    updated = False
+
     with open('data/scriptures.json', 'r') as scriptures_file:
         scriptures = json.load(scriptures_file)
 
-    for i in range(len(scriptures['scriptures'])):
-        if scriptures['scriptures'][i]['scripture'] == request.get_json()['scripture']:
-            try:
-                scriptures['scriptures'][i]['scripture'] = request.get_json()[
-                    'new_scripture']
+    for scripture in scriptures['scriptures']:
+        if scripture['scripture'] != request.get_json()['scripture']:
+            continue
 
-            except KeyError:
-                pass
+        logger.info(f"Updating '{request.get_json()['scripture']}' verse")
+        logger.debug(f"Current verse '{scripture['verse']}' verse")
+        logger.debug(f"New verse '{request.get_json()['updated_verse']}' verse")
+        scripture['verse'] = request.get_json()['updated_verse']
+        updated = True
+        logger.debug(f"Current verse '{scripture['verse']}' verse")
 
-            try:
-                scriptures['scriptures'][i]['verse'] = request.get_json()[
-                    'new_verse']
+    if updated:
+        with open('data/scriptures.json', 'w') as scriptures_file:
+            json.dump(scriptures, scriptures_file, indent=4)
 
-            except KeyError:
-                pass
+        return jsonify({"success": "true", "message": "scripture updated"})
 
-            try:
-                scriptures['scriptures'][i]['action'] = request.get_json()[
-                    'new_action']
+    return jsonify({"success": "true", "message": "unable to find matching scripture"})
 
-            except KeyError:
-                pass
-
-            with open('data/scriptures.json', 'w') as scriptures_file:
-                json.dump(scriptures, scriptures_file, indent=4)
-
-            return jsonify('{"message": "scripture updated"}')
-
-    return jsonify('{"message": "unable to find matching scripture"}')
-    
 
 # DELETE /deleteScripture
 @app.route('/scripture/', methods=['DELETE'])
@@ -110,25 +100,29 @@ def delete_scripture():
     with open('data/scriptures.json', 'r') as scriptures_file:
         scriptures = json.load(scriptures_file)
 
+    logger.info(f"Removing {request.get_json()['scripture']}")
+    logger.debug(f"scripture count: {len(scriptures['scriptures'])}")
+    logger.debug(
+        f"scriptures: {[x['scripture'] for x in scriptures['scriptures']]}"
+    )
     start_size = len(scriptures['scriptures'])
     scriptures['scriptures'] = list(
         filter(
-            lambda x: x['scripture'] != request.get_json(),
+            lambda x: x['scripture'] != request.get_json()['scripture'],
             scriptures['scriptures']
-            )
         )
+    )
 
-    # for i in range(len(scriptures['scriptures'])):
-    #     if scriptures['scriptures'][i]['scripture'] == request.get_json()['scripture']:
-    #         scriptures['scriptures'].pop(i)
-
+    logger.debug(f"scripture count: {len(scriptures['scriptures'])}")
+    logger.debug(
+        f"scriptures: {[x['scripture'] for x in scriptures['scriptures']]}"
+    )
     if start_size > len(scriptures['scriptures']):
+        logger.info(f"'{request.get_json()['scripture']}' removed")
         with open('data/scriptures.json', 'w') as scriptures_file:
             json.dump(scriptures, scriptures_file, indent=4)
 
         return jsonify({"success": "true"})
 
+    logger.info(f"'{request.get_json()['scripture']}' not found")
     return jsonify({"success": "true", "message": "unable to find matching scripture"})
-
-
-# app.run(port=5000)

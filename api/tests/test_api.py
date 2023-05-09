@@ -1,5 +1,6 @@
 import json
 import logging as logger
+
 import pytest
 import requests
 
@@ -47,8 +48,46 @@ def add_scripture(scripture):
     logger.info("Scripture added")
 
 
+def get_scripture():
+    logger.info("Getting scripture...")
+
+    ACTION = "scripture"
+
+    response = requests.get(f"{ENDPOINT}:{PORT}/{ACTION}")
+
+    content = json.loads(response.content)
+
+    if not response.status_code == 200 or not content['success'] == "true":
+        logger.error("Something went wrong while getting a scripture")
+        logger.debug(f"Status Code: {response.status_code}")
+        logger.debug(f"Success: {content['success']}")
+
+    logger.info("Scripture retrieved")
+    return content['scripture']
+
+
+def update_verse(scripture, updated_verse):
+    logger.info("Updating verse...")
+
+    ACTION = "scripture/verse"
+
+    payload = {"scripture": scripture, "updated_verse": updated_verse}
+    logger.debug(f"request payload: {payload}")
+
+    response = requests.update(f"{ENDPOINT}:{PORT}/{ACTION}")
+
+    content = json.loads(response.content)
+
+    if not response.status_code == 200 or not content['success'] == "true":
+        logger.error("Something went wrong while updating a verse")
+        logger.debug(f"Status Code: {response.status_code}")
+        logger.debug(f"Success: {content['success']}")
+
+    logger.info("Veruse updated")
+
+
 @pytest.fixture
-def new_scripture():
+def fixture_add_scripture():
     """
     """
 
@@ -66,7 +105,25 @@ def new_scripture():
 
 
 @pytest.fixture
-def target_scripture():
+def fixture_delete_scripture():
+    """
+    """
+
+    scripture = {
+        "action": "test action",
+        "verse": "test verse",
+        "scripture": "test scripture"
+    }
+
+    add_scripture(scripture)
+
+    logger.info("Test scripture added...")
+
+    return scripture
+
+
+@pytest.fixture
+def fixture_update_scripture():
     """
     """
 
@@ -100,7 +157,7 @@ def test_get_scripture():
 
     logger.debug(f"assert 'action' in {content.keys()}")
     assert "action" in content
-    
+
     logger.debug(f"assert 'action' has value: {content['action']}")
     assert content['action']
 
@@ -117,7 +174,7 @@ def test_get_scripture():
     assert content['verse']
 
 
-def test_post_scripture(new_scripture):
+def test_post_scripture(fixture_add_scripture):
     """
     """
 
@@ -125,7 +182,7 @@ def test_post_scripture(new_scripture):
 
     ACTION = "scripture"
 
-    payload = new_scripture
+    payload = fixture_add_scripture
     logger.debug(f"request payload: {payload}")
 
     response = requests.post(f"{ENDPOINT}:{PORT}/{ACTION}", json=payload)
@@ -138,7 +195,7 @@ def test_post_scripture(new_scripture):
     assert content['success'] == "true"
 
 
-def test_delete_scripture(target_scripture):
+def test_delete_scripture(fixture_delete_scripture):
     """
     """
 
@@ -146,10 +203,35 @@ def test_delete_scripture(target_scripture):
 
     ACTION = "scripture"
 
-    payload = target_scripture['scripture']
+    payload = {"scripture": fixture_delete_scripture['scripture']}
     logger.debug(f"request payload: {payload}")
 
     response = requests.delete(f"{ENDPOINT}:{PORT}/{ACTION}", json=payload)
+
+    logger.debug(f"assert {response.status_code} == 200")
+    assert response.status_code == 200
+
+    content = json.loads(response.content)
+    logger.debug(f"assert {content['success']} == true")
+    assert content['success'] == "true"
+
+
+def test_update_scripture(fixture_update_scripture):
+    """
+    """
+
+    logger.info('Running UPDATE SCRIPTURE test...')
+
+    ACTION = "scripture/verse"
+
+    payload = {
+        "scripture": fixture_update_scripture['scripture'],
+        "updated_verse": "updated test verse"
+    }
+
+    logger.debug(f"request payload: {payload}")
+
+    response = requests.put(f"{ENDPOINT}:{PORT}/{ACTION}", json=payload)
 
     logger.debug(f"assert {response.status_code} == 200")
     assert response.status_code == 200
