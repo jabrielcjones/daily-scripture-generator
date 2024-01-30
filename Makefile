@@ -52,6 +52,7 @@ build:
 up: build
 	@echo "$(GREEN)Starting all services...$(NC)"
 	@docker-compose -p $(COMPOSE_PROJECT_NAME) up -d
+	@docker image prune -f
 
 # Stop all services
 stop:
@@ -62,6 +63,7 @@ stop:
 clean:
 	@echo "$(RED)Removing all containers, networks, and volumes...$(NC)"
 	@docker-compose -p $(COMPOSE_PROJECT_NAME) down --volumes
+	@docker image prune -f
 
 # Rebuild and start all services
 rebuild: stop build up
@@ -75,6 +77,7 @@ logs:
 build-frontend:
 	@echo "$(GREEN)Building frontend service...$(NC)"
 	@docker-compose -p $(COMPOSE_PROJECT_NAME) build frontend
+	@docker image prune -f
 
 # Run the frontend service
 run-frontend:
@@ -85,11 +88,13 @@ run-frontend:
 clean-frontend:
 	@echo "$(RED)Removing frontend service...$(NC)"
 	@docker-compose -p $(COMPOSE_PROJECT_NAME) rm -f -s -v frontend
+	@docker image prune -f
 
 # Build the api service
 build-api:
 	@echo "$(GREEN)Building api service...$(NC)"
 	@docker-compose -p $(COMPOSE_PROJECT_NAME) build api
+	@docker image prune -f
 
 # Run the api service
 run-api:
@@ -100,11 +105,13 @@ run-api:
 clean-api:
 	@echo "$(RED)Removing api service...$(NC)"
 	@docker-compose -p $(COMPOSE_PROJECT_NAME) rm -f -s -v api
+	@docker image prune -f
 
 # Build the db service
 build-db:
 	@echo "$(GREEN)Building db service...$(NC)"
 	@docker-compose -p $(COMPOSE_PROJECT_NAME) build db
+	@docker image prune -f
 
 # Run the db service
 run-db:
@@ -115,5 +122,6 @@ run-db:
 clean-db:
 	@echo "$(RED)Removing db service...$(NC)"
 	@docker-compose -p $(COMPOSE_PROJECT_NAME) rm -f -s -v db
+	@docker image prune -f
 
-.PHONY: build up down rebuild logs help build-frontend run-frontend build-api run-api build-db run-db clean clean-frontend clean-api clean-db
+.PHONY: build up stop rebuild logs help build-frontend run-frontend build-api run-api build-db run-db clean clean-frontend clean-api clean-db
