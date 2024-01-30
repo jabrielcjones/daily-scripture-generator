@@ -1,5 +1,25 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Entire Project
+
+```bash
+docker-compose down
+``````
+
+## Frontend Only
+
+```bash
+docker-compose up frontend
+```
+
+```bash
+docker-compose up -d frontend
+```
+
+```bash
+docker-compose stop frontend
+```
+
 ## Getting Started
 
 First, run the development server:

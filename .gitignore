@@ -1,7 +1,76 @@
-node_modules
-.next
-*.python*
-yarn*
-*pyc*
-*lock*
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# production
+/build
+/out
+/.next
+/.vercel
+
+# local environment files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Coverage reports
+/coverage
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# OS files
+.DS_Store
+
+# IDEs and editors
+.vscode/
+.spyderproject
+.spyproject
+.ropeproject
+.python-version
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Logs and databases
 *.log
+db.sqlite3
+db.sqlite3-journal
+
+# Flask
+instance/
+
+# mypy
+.mypy_cache/
